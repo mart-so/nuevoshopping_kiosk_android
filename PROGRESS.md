@@ -16,14 +16,16 @@ Objetivo inmediato cumplido: versión mínima compilable que abre una URL config
 
 ## Pendiente de esta primera entrega
 
-- Instalar y probar visualmente en un dispositivo Android; no había emulador/dispositivo conectado (`adb devices` vacío).
+- Ejecutar una prueba visual en dispositivo Android.
 - Ejecutar la prueba instrumental de PIN/Keystore y arranque en dispositivo.
 - Probar Device Owner y Lock Task en un dispositivo restablecido.
 - Validar fabricantes y configuraciones Android físicas.
 - Agregar recuperación cuando el proceso WebView renderer muere.
 - Implementar descargas seguras y comportamiento configurable del botón Atrás.
 - Completar manejo de errores, accesibilidad y pruebas de persistencia/conectividad en dispositivo.
-- Implementar o retirar controles que todavía no están operativos (descargas, timeout y comportamiento configurable de Atrás).
-- Prueba manual en hardware Android y comprobar aprovisionamiento Device Owner: no se puede afirmar hasta ejecutarla.
 
-Verificado en esta máquina: `testDebugUnitTest`, `assembleDebug`, `assembleRelease` y `assembleDebugAndroidTest` terminaron con éxito. El APK debug pasó `apksigner verify`; release está generado sin firma por diseño. No hay Android conectado, por lo que no se afirma ejecución en dispositivo. El primer intento unitario usaba Robolectric y falló porque faltaba su runtime local; se eliminó esa dependencia para que las validaciones JVM no dependan de ella. La prueba instrumental de AndroidKeyStore compila, pero está pendiente ejecutarla en un dispositivo/emulador.
+Verificado en esta máquina: `testDebugUnitTest`, `assembleDebug`, `assembleRelease` y `assembleDebugAndroidTest` terminaron con éxito. El APK debug pasó `apksigner verify`; release está generado sin firma por diseño. La prueba instrumental de AndroidKeyStore compila, pero está pendiente ejecutarla en un dispositivo/emulador.
+
+## Intento de demo en emulador
+
+Se encontró el AVD `Medium_Phone_API_36` (Android 36, x86_64), pero no arrancó con aceleración porque el Android Emulator Hypervisor Driver no está instalado. Se instaló Android Emulator 37.2.13 y la imagen API 36 ARM64; QEMU2 informa que no admite ARM64 sobre el host x86_64. El AVD x86_64 también termina con un fallo nativo de Windows en TCG (`ANDROID_I_WANT_MY_TCG=yes`, `-accel off`, salida `-1073741819`). `adb devices` quedó vacío y no se instaló/abrió el APK. Para correr la demo hace falta conectar un dispositivo Android con depuración USB o usar un host x86_64 con WHPX/hipervisor disponible. El APK debug está listo en `dist/`.
