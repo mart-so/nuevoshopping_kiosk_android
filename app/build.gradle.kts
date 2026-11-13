@@ -1,3 +1,7 @@
+import java.io.File
+import java.nio.file.Files
+import java.time.LocalDate
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -11,8 +15,8 @@ android {
         applicationId = "com.generic.kiosk"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,4 +44,38 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
+}
+
+val repoRoot = rootProject.projectDir.canonicalFile
+fun publishDatedApk(variant: String, source: File) {
+    val dist = File(repoRoot, "dist").canonicalFile
+    check(dist.parentFile == repoRoot) { "APK output directory must remain inside the repository: $dist" }
+    check(source.isFile) { "Expected APK was not produced: $source" }
+    dist.mkdirs()
+
+    val datedNamePattern = Regex("^generic-kiosk-browser-${Regex.escape(variant)}-\\d{4}-\\d{2}-\\d{2}\\.apk$")
+    dist.listFiles().orEmpty()
+        .filter { it.isFile && datedNamePattern.matches(it.name) }
+        .forEach { oldApk ->
+            check(oldApk.canonicalFile.parentFile == dist && !Files.isSymbolicLink(oldApk.toPath())) {
+                "Refusing to remove an APK outside dist or a symbolic link: $oldApk"
+            }
+            check(oldApk.delete()) { "Could not remove previous dated APK: $oldApk" }
+        }
+
+    val date = LocalDate.now().toString()
+    val stableName = if (variant == "debug") "generic-kiosk-browser-debug.apk" else "generic-kiosk-browser-release-unsigned.apk"
+    source.copyTo(File(dist, stableName), overwrite = true)
+    source.copyTo(File(dist, "generic-kiosk-browser-$variant-$date.apk"), overwrite = true)
+}
+
+tasks.configureEach {
+    when (name) {
+        "assembleDebug" -> doLast {
+            publishDatedApk("debug", layout.buildDirectory.file("outputs/apk/debug/app-debug.apk").get().asFile)
+        }
+        "assembleRelease" -> doLast {
+            publishDatedApk("release-unsigned", layout.buildDirectory.file("outputs/apk/release/app-release-unsigned.apk").get().asFile)
+        }
+    }
 }

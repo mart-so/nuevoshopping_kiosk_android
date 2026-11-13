@@ -6,11 +6,11 @@ Este archivo describe únicamente el APK `dist/generic-kiosk-browser-debug.apk`.
 
 - Ruta: `dist/generic-kiosk-browser-debug.apk`
 - Nombre de paquete: `com.generic.kiosk.debug`
-- Versión: `1.0.0-debug` (`versionCode` 1)
+- Versión: `1.0.1-debug` (`versionCode` 2)
 - Android mínimo: 8.0 / API 26
 - Android objetivo: API 35; compilado con SDK 35
-- Tamaño: 3,247,181 bytes
-- SHA-256: `53a8af55e6017cd2fa7409744b2aa0337f036eee90356986ae0ff5eab6f28d75`
+- Tamaño: 3,216,895 bytes
+- SHA-256: `cf65d71a7827f409139e9acabad77eef3b1c765ec4a0f6610408bee4d738a8b5`
 - Firma: firmado automáticamente por Gradle con la clave de desarrollo local. Se puede instalar para pruebas sin firmarlo de nuevo. Para actualizar una instalación existente, el certificado debe coincidir.
 
 Para regenerarlo desde la raíz del repo:
@@ -23,7 +23,7 @@ Gradle también coloca el resultado en `app/build/outputs/apk/debug/app-debug.ap
 
 ## Propósito y uso inicial
 
-**Generic Kiosk Browser** es una app Android nativa en Kotlin que abre una página web dentro de Android WebView. Está pensada para pantallas de información, tablets de atención y navegación dedicada. No requiere cuenta ni servicios cloud; no tiene publicidad ni telemetría.
+**NuevoShopping Kiosk** es una app Android nativa en Kotlin que abre una página web dentro de Android WebView. Está pensada para pantallas de información, tablets de atención y navegación dedicada. No requiere cuenta ni servicios cloud; no tiene publicidad ni telemetría.
 
 Instalación y apertura:
 
@@ -32,14 +32,16 @@ adb install -r dist\generic-kiosk-browser-debug.apk
 adb shell monkey -p com.generic.kiosk.debug 1
 ```
 
-Al iniciar por primera vez abre `https://example.com`. Para configurar otra página:
+Al iniciar por primera vez abre `https://nuevoshopping.com/screens/link`. Para configurar otra página:
 
-1. Tocar cinco veces rápidamente la esquina superior izquierda de la pantalla.
-2. Ingresar el PIN inicial `1234`.
+1. Tocar el botón visible **Ajustes**.
+2. Ingresar el PIN inicial `1234` (se indica en la pantalla si no se cambió).
 3. Cambiar el PIN y configurar la URL HTTP/HTTPS.
 4. Guardar y volver a la pantalla principal.
 
 El PIN inicial debe cambiarse antes de un uso real. Los PIN admitidos son de 4 a 12 dígitos. La verificación usa HMAC-SHA256 con una clave de Android Keystore; el PIN en texto claro no se guarda. Las preferencias se guardan localmente con Preferences DataStore.
+
+La aplicación se ejecutó previamente en un Redmi Note 8 con Android 11 y MIUI V125. Se corrigió un cierre al arrancar causado por acceder al `mainLooper` del contexto de la Activity durante su construcción. La versión 1.0.1 agrega la URL solicitada, acceso visible a Ajustes y elegibilidad como launcher Android. MIUI bloquea `adb install` sin SIM; la actualización fechada `generic-kiosk-browser-debug-2026-11-13.apk` está en Descargas del teléfono para instalarla manualmente.
 
 ## Funciones incluidas
 
@@ -63,7 +65,9 @@ El PIN inicial debe cambiarse antes de un uso real. Los PIN admitidos son de 4 a
 
 ### Panel administrativo
 
-Se accede mediante el gesto de cinco toques y el PIN. El panel permite cambiar URL inicial, autoinicio, pantalla completa, modo dedicado, pantalla encendida, orientación, enlaces a otros hosts, intervalo de recarga, timeout y PIN.
+Se accede mediante el botón visible **Ajustes** y el PIN. El panel permite cambiar URL inicial, autoinicio, pantalla completa, modo dedicado, pantalla encendida, orientación, enlaces a otros hosts, intervalo de recarga, timeout y PIN. La entrada del PIN tiene una opción para mostrar u ocultar los dígitos.
+
+La actividad principal declara las categorías `HOME` y `DEFAULT`, además de `LAUNCHER`. Android y el launcher del fabricante pueden ofrecer **NuevoShopping Kiosk** como aplicación de inicio predeterminada.
 
 El botón “Estado y salir del modo quiosco” informa conectividad, Device Owner y permiso Lock Task. Puede solicitar salida de Lock Task si el paquete es Device Owner. El botón Atrás vuelve por el historial web y luego usa el comportamiento normal de Android; aún no es configurable.
 
@@ -89,4 +93,4 @@ Permisos declarados: `INTERNET`, `ACCESS_NETWORK_STATE` y `RECEIVE_BOOT_COMPLETE
 
 ## Verificación realizada
 
-El APK compila y su firma pasó `apksigner verify`. Las pruebas JVM pasaron; la prueba instrumental de Android Keystore no se ha ejecutado en un dispositivo. Aún no se ha instalado ni validado en hardware real. En esta PC no hay ADB conectado; el AVD disponible no arranca sin aceleración de hardware, así que no afirmar que la app se haya ejecutado en emulador.
+El APK compila y su firma pasó `apksigner verify`. Las pruebas JVM pasaron; la prueba instrumental de Android Keystore no se ha ejecutado en un dispositivo. Aún no se ha instalado ni validado en hardware real. El AVD x86_64 se volvió a lanzar con ventana visible, emulador 37.2.13 y TCG (`ANDROID_I_WANT_MY_TCG=yes`, `-accel off`), pero se cerró antes de aparecer en ADB. No afirmar que la app se haya instalado o ejecutado en emulador.

@@ -5,8 +5,9 @@ Aplicación Android nativa en Kotlin para mostrar un sitio web a pantalla comple
 ## Estado de las funciones
 
 - WebView con JavaScript, cookies y almacenamiento DOM; solo admite navegación HTTP/HTTPS y bloquea `file:`, `javascript:`, `intent:` y otros esquemas.
-- Persistencia de URL y opciones mediante Preferences DataStore. El PIN se verifica con HMAC-SHA256 y una clave en Android Keystore; el PIN inicial es `1234` y debe cambiarse.
-- Cinco toques rápidos en la esquina superior izquierda abren el panel administrativo.
+- URL inicial predeterminada: `https://nuevoshopping.com/screens/link`. Las opciones se guardan con Preferences DataStore.
+- El botón visible **Ajustes** abre la administración. El PIN inicial `1234` se muestra en la pantalla de acceso si todavía no se cambió; también se puede mostrar/ocultar el PIN que se escribe.
+- MainActivity está declarada como actividad `HOME`, por lo que Android puede ofrecer **NuevoShopping Kiosk** para elegirla como launcher predeterminado, además de mostrarla en el lanzador normal.
 - Pantalla inmersiva, orientación, pantalla encendida, carga al arranque y recuperación de conectividad.
 - Lock Task con lista permitida solo si Android informa que esta app es Device Owner.
 - No hay telemetría, anuncios ni servicios externos.
@@ -25,7 +26,7 @@ En Windows PowerShell:
 .\scripts\build.ps1
 ```
 
-El script `scripts\build.ps1` deja copias listas en `dist\generic-kiosk-browser-debug.apk` y `dist\generic-kiosk-browser-release-unsigned.apk`. Gradle también conserva sus salidas normales dentro de `app\build\outputs\apk\`.
+Cada `assembleDebug` o `assembleRelease` —también desde Android Studio— copia el APK a `dist` con fecha, por ejemplo `generic-kiosk-browser-debug-2026-11-13.apk`, y reemplaza las copias fechadas anteriores de esa variante. También mantiene nombres estables para las guías e instalaciones. El script `scripts\build.ps1` compila ambas variantes y limpia además las copias fechadas anteriores de las dos. Gradle conserva sus salidas normales dentro de `app\build\outputs\apk\`.
 
 Las pruebas unitarias se ejecutan con `.\gradlew.bat testDebugUnitTest`; la prueba instrumental requiere un emulador/dispositivo y `.\gradlew.bat connectedDebugAndroidTest`.
 
@@ -36,7 +37,7 @@ Las pruebas unitarias se ejecutan con `.\gradlew.bat testDebugUnitTest`; la prue
 .\scripts\status.ps1
 ```
 
-O manualmente: `adb install -r app\build\outputs\apk\debug\app-debug.apk`, luego abrir **Generic Kiosk Browser**, configurar URL y cambiar PIN.
+O manualmente: `adb install -r dist\generic-kiosk-browser-debug.apk`, luego abrir **NuevoShopping Kiosk**. En Android, se puede elegir en Ajustes del sistema como aplicación de inicio predeterminada.
 
 ## Provisionamiento Dedicated Device / Device Owner
 
@@ -64,10 +65,10 @@ La versión release actual se produce sin firmar. Firmala localmente con Android
 
 - **Modo fullscreen convencional:** salir con el gesto del sistema o navegación Android. El ocultamiento inmersivo no es un bloqueo de seguridad y algunos fabricantes pueden mostrar controles del sistema.
 - **Lock Task:** solo Device Owner controla la allowlist; el comando `startLockTask()` en un equipo normal no promete un quiosco administrado.
-- **Inicio al arranque:** `BOOT_COMPLETED` requiere que la app haya sido iniciada al menos una vez y que el fabricante permita el inicio. Android moderno limita inicios de Activity desde background; configure la app como launcher/dedicada mediante provisioning o MDM cuando sea necesario.
+- **Inicio al arranque:** `BOOT_COMPLETED` requiere que la app haya sido iniciada al menos una vez y que el fabricante permita el inicio. Android moderno limita inicios de Activity desde background; también se puede elegir esta app como launcher predeterminado desde los ajustes del sistema.
 - **Corte eléctrico:** el encendido automático es una función del firmware, no de la app.
 - **HTTP:** se permite por compatibilidad, pero puede transmitir datos sin cifrar. Preferí HTTPS.
-- **Panel:** cinco toques en esquina superior izquierda y PIN. El PIN inicial `1234` no es adecuado para producción. La app guarda un HMAC del PIN y mantiene la clave HMAC en Android Keystore; un dispositivo rooteado/comprometido sigue fuera del modelo de protección.
+- **Panel:** botón visible **Ajustes** y PIN. El PIN inicial `1234` no es adecuado para producción. La app guarda un HMAC del PIN y mantiene la clave HMAC en Android Keystore; un dispositivo rooteado/comprometido sigue fuera del modelo de protección.
 - **Compatibilidad fabricante:** Xiaomi/MIUI, Samsung y otros pueden requerir permitir autoinicio o excluir optimización de batería en ajustes del sistema.
 
 ## Lista de prueba manual

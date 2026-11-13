@@ -2,6 +2,8 @@ package com.generic.kiosk
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.text.InputType
+import android.text.method.PasswordTransformationMethod
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.ComponentActivity
@@ -19,9 +21,25 @@ class SettingsActivity : ComponentActivity() {
         settingsRoot = container
         val scroll = ScrollView(this).apply { addView(container) }
         setContentView(scroll)
-        pin = EditText(this).apply { hint = "PIN de administrador"; inputType = 2 }
+        pin = EditText(this).apply {
+            hint = "PIN de administrador"
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            transformationMethod = PasswordTransformationMethod.getInstance()
+        }
         container.addView(TextView(this).apply { text = "Acceso de administrador"; textSize = 24f })
+        container.addView(TextView(this).apply {
+            text = "PIN predeterminado: 1234 (si no lo cambiaste)"
+            textSize = 16f
+            setPadding(0, 12, 0, 12)
+        })
         container.addView(pin)
+        container.addView(CheckBox(this).apply {
+            text = "Mostrar PIN escrito"
+            setOnCheckedChangeListener { _, shown ->
+                pin.transformationMethod = if (shown) null else PasswordTransformationMethod.getInstance()
+                pin.setSelection(pin.text.length)
+            }
+        })
         val enter = Button(this).apply { text = "Desbloquear" }
         container.addView(enter)
         enter.setOnClickListener {

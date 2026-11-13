@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.first
 private val Context.dataStore by preferencesDataStore("kiosk_settings")
 
 data class KioskSettings(
-    val startUrl: String = "https://example.com",
+    val startUrl: String = "https://nuevoshopping.com/screens/link",
     val autoStart: Boolean = true,
     val fullscreen: Boolean = true,
     val lockTask: Boolean = false,
@@ -38,7 +38,7 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun load(): KioskSettings {
         val p = context.dataStore.data.first()
-        return KioskSettings(p[Keys.url] ?: "https://example.com", p[Keys.auto] ?: true,
+        return KioskSettings(p[Keys.url] ?: "https://nuevoshopping.com/screens/link", p[Keys.auto] ?: true,
             p[Keys.full] ?: true, p[Keys.lock] ?: false, p[Keys.keep] ?: true,
             p[Keys.external] ?: false, p[Keys.downloads] ?: false, p[Keys.orientation] ?: "system",
             p[Keys.reload] ?: 0, p[Keys.timeout] ?: 45, p[Keys.pin] ?: AdminAuthenticator.hash("1234"))

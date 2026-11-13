@@ -2,10 +2,18 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <application android:allowBackup="false" android:label="Generic Kiosk Browser" android:usesCleartextTraffic="true" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:supportsRtl="true">
+    <application android:allowBackup="false" android:label="NuevoShopping Kiosk" android:usesCleartextTraffic="true" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:supportsRtl="true">
         <activity android:name=".SettingsActivity" android:exported="false" android:screenOrientation="unspecified" />
-        <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden" android:launchMode="singleTask" android:screenOrientation="unspecified">
-            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        <activity android:name=".MainActivity" android:exported="true" android:label="NuevoShopping Kiosk" android:configChanges="orientation|screenSize|keyboardHidden" android:launchMode="singleTask" android:screenOrientation="unspecified">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <receiver android:name=".AdminReceiver" android:permission="android.permission.BIND_DEVICE_ADMIN" android:exported="true">
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />

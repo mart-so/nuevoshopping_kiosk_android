@@ -46,7 +46,7 @@ class KioskWebView(context: Context, private val externalAllowed: () -> Boolean)
         layoutParams = FrameLayout.LayoutParams(-1, -1)
     }
     var progress: ((Boolean) -> Unit)? = null
-    fun reloadHome(url: String) { val valid = UrlValidator.validate(url) ?: "https://example.com"; homeHost = Uri.parse(valid).host; loadUrl(valid) }
+    fun reloadHome(url: String) { val valid = UrlValidator.validate(url) ?: "https://nuevoshopping.com/screens/link"; homeHost = Uri.parse(valid).host; loadUrl(valid) }
     fun showMessage(title: String, detail: String) { loadDataWithBaseURL(null, errorHtml(title, detail), "text/html", "UTF-8", null) }
     fun recoverRenderer() { runCatching { destroy() } }
     private fun errorHtml(title: String, detail: String): String {

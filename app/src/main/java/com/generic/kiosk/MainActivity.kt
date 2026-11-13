@@ -2,13 +2,17 @@ package com.generic.kiosk
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.widget.FrameLayout
 import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.TextView
+import android.util.TypedValue
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
@@ -20,10 +24,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var settings: KioskSettings
     private var wasOffline = false
     private var reloadTask: Runnable? = null
-    private val handler = android.os.Handler(mainLooper)
+    // Activity context is not attached while Activity fields are constructed.
+    private val handler = Handler(Looper.getMainLooper())
     private val loadTimeout = Runnable { browser.stopLoading(); browser.showMessage("Carga interrumpida", "Se superó el tiempo máximo configurado. Comprobá la red e intentá nuevamente.") }
-    private var taps = 0
-    private var lastTap = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,16 +41,26 @@ class MainActivity : ComponentActivity() {
             handler.removeCallbacks(loadTimeout)
             if (loading && ::settings.isInitialized) handler.postDelayed(loadTimeout, settings.loadTimeoutSeconds * 1000L)
         }
-        val adminGesture = View(this).apply {
-            contentDescription = null
-            setOnClickListener {
-                val now = android.os.SystemClock.elapsedRealtime()
-                taps = if (now - lastTap < 800) taps + 1 else 1
-                lastTap = now
-                if (taps >= 5) { taps = 0; openAdmin() }
+        val settingsButton = TextView(this).apply {
+            text = "Ajustes"
+            contentDescription = "Abrir configuración"
+            setTextColor(Color.WHITE)
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+            setPadding(dp(16), dp(10), dp(16), dp(10))
+            background = GradientDrawable().apply {
+                setColor(0xD9212121.toInt())
+                cornerRadius = dp(10).toFloat()
             }
+            elevation = dp(6).toFloat()
+            isClickable = true
+            isFocusable = true
+            setOnClickListener { openAdmin() }
         }
-        root.addView(adminGesture, FrameLayout.LayoutParams(72, 72, Gravity.TOP or Gravity.START))
+        root.addView(settingsButton, FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            Gravity.TOP or Gravity.END
+        ).apply { setMargins(0, dp(16), dp(16), 0) })
         setContentView(root)
         lifecycleScope.launch {
             settings = runCatching { repo.load() }.getOrDefault(KioskSettings())
@@ -55,7 +68,7 @@ class MainActivity : ComponentActivity() {
             browser.reloadHome(settings.startUrl)
         }
         monitor = NetworkMonitor(this) { connected ->
-            if (connected && wasOffline && ::browser.isInitialized) browser.reloadHome(settings.startUrl)
+            if (connected && wasOffline && ::browser.isInitialized && ::settings.isInitialized) browser.reloadHome(settings.startUrl)
             wasOffline = !connected
         }
     }
@@ -85,6 +98,8 @@ class MainActivity : ComponentActivity() {
         startActivity(android.content.Intent(this, SettingsActivity::class.java))
     }
 
+    private fun dp(value: Int): Int = (value * resources.displayMetrics.density + 0.5f).toInt()
+
     override fun onResume() {
         super.onResume()
         if (::settings.isInitialized) {
@@ -103,5 +118,10 @@ class MainActivity : ComponentActivity() {
     @Deprecated("Deprecated in Android")
     override fun onBackPressed() { if (browser.canGoBack()) browser.goBack() else super.onBackPressed() }
     override fun onWindowFocusChanged(hasFocus: Boolean) { super.onWindowFocusChanged(hasFocus); if (hasFocus && ::settings.isInitialized && settings.fullscreen) hideSystemUi() }
-    override fun onDestroy() { reloadTask?.let(handler::removeCallbacks); handler.removeCallbacks(loadTimeout); browser.destroy(); super.onDestroy() }
+    override fun onDestroy() {
+        reloadTask?.let(handler::removeCallbacks)
+        handler.removeCallbacks(loadTimeout)
+        if (::browser.isInitialized) browser.destroy()
+        super.onDestroy()
+    }
 }
