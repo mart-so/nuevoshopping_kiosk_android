@@ -25,7 +25,7 @@ En Windows PowerShell:
 .\scripts\build.ps1
 ```
 
-APK debug esperado: `app\build\outputs\apk\debug\app-debug.apk`. APK release no firmado: `app\build\outputs\apk\release\app-release-unsigned.apk`.
+El script `scripts\build.ps1` deja copias listas en `dist\generic-kiosk-browser-debug.apk` y `dist\generic-kiosk-browser-release-unsigned.apk`. Gradle también conserva sus salidas normales dentro de `app\build\outputs\apk\`.
 
 Las pruebas unitarias se ejecutan con `.\gradlew.bat testDebugUnitTest`; la prueba instrumental requiere un emulador/dispositivo y `.\gradlew.bat connectedDebugAndroidTest`.
 

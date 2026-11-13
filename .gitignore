@@ -4,6 +4,7 @@ local.properties
 *.jks
 *.keystore
 *.apk
+!dist/*.apk
 *.aab
 captures/
 .idea/

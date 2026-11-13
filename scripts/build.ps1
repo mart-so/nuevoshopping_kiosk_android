@@ -6,4 +6,8 @@ Push-Location $Repo
 try {
     .\gradlew.bat --no-daemon testDebugUnitTest assembleDebug assembleRelease
     if ($LASTEXITCODE -ne 0) { throw "Gradle terminó con código $LASTEXITCODE" }
+    $Dist = Join-Path $Repo 'dist'
+    New-Item -ItemType Directory -Force -Path $Dist | Out-Null
+    Copy-Item -LiteralPath (Join-Path $Repo 'app\build\outputs\apk\debug\app-debug.apk') -Destination (Join-Path $Dist 'generic-kiosk-browser-debug.apk') -Force
+    Copy-Item -LiteralPath (Join-Path $Repo 'app\build\outputs\apk\release\app-release-unsigned.apk') -Destination (Join-Path $Dist 'generic-kiosk-browser-release-unsigned.apk') -Force
 } finally { Pop-Location }
