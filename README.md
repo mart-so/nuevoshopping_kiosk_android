@@ -6,7 +6,7 @@ Aplicación Android nativa en Kotlin para mostrar un sitio web a pantalla comple
 
 - WebView con JavaScript, cookies y almacenamiento DOM; solo admite navegación HTTP/HTTPS y bloquea `file:`, `javascript:`, `intent:` y otros esquemas.
 - URL inicial predeterminada: `https://nuevoshopping.com/screens/link`. Las opciones se guardan con Preferences DataStore.
-- El botón visible **Ajustes** abre la administración. El PIN inicial `1234` se muestra en la pantalla de acceso si todavía no se cambió; también se puede mostrar/ocultar el PIN que se escribe.
+- El icono `⋮` sin fondo abre la administración. El PIN inicial `1234` se muestra en la pantalla de acceso si todavía no se cambió; también se puede mostrar/ocultar el PIN que se escribe.
 - MainActivity está declarada como actividad `HOME`, por lo que Android puede ofrecer **NuevoShopping Kiosk** para elegirla como launcher predeterminado, además de mostrarla en el lanzador normal.
 - Pantalla inmersiva, orientación, pantalla encendida, carga al arranque y recuperación de conectividad.
 - Lock Task con lista permitida solo si Android informa que esta app es Device Owner.
@@ -26,7 +26,7 @@ En Windows PowerShell:
 .\scripts\build.ps1
 ```
 
-Cada `assembleDebug` o `assembleRelease` —también desde Android Studio— copia el APK a `dist` con fecha, por ejemplo `generic-kiosk-browser-debug-2026-11-13.apk`, y reemplaza las copias fechadas anteriores de esa variante. También mantiene nombres estables para las guías e instalaciones. El script `scripts\build.ps1` compila ambas variantes y limpia además las copias fechadas anteriores de las dos. Gradle conserva sus salidas normales dentro de `app\build\outputs\apk\`.
+Cada `assembleDebug` o `assembleRelease` —también desde Android Studio— copia el APK a `dist` con fecha, hora y minuto, por ejemplo `generic-kiosk-browser-debug-2026-11-13-2044.apk`, y reemplaza las copias fechadas anteriores de esa variante. También mantiene nombres estables para las guías e instalaciones. El script `scripts\build.ps1` compila ambas variantes y limpia además las copias fechadas anteriores de las dos. Gradle conserva sus salidas normales dentro de `app\build\outputs\apk\`.
 
 Las pruebas unitarias se ejecutan con `.\gradlew.bat testDebugUnitTest`; la prueba instrumental requiere un emulador/dispositivo y `.\gradlew.bat connectedDebugAndroidTest`.
 
@@ -68,7 +68,7 @@ La versión release actual se produce sin firmar. Firmala localmente con Android
 - **Inicio al arranque:** `BOOT_COMPLETED` requiere que la app haya sido iniciada al menos una vez y que el fabricante permita el inicio. Android moderno limita inicios de Activity desde background; también se puede elegir esta app como launcher predeterminado desde los ajustes del sistema.
 - **Corte eléctrico:** el encendido automático es una función del firmware, no de la app.
 - **HTTP:** se permite por compatibilidad, pero puede transmitir datos sin cifrar. Preferí HTTPS.
-- **Panel:** botón visible **Ajustes** y PIN. El PIN inicial `1234` no es adecuado para producción. La app guarda un HMAC del PIN y mantiene la clave HMAC en Android Keystore; un dispositivo rooteado/comprometido sigue fuera del modelo de protección.
+- **Panel:** icono visible `⋮` y PIN. El PIN inicial `1234` no es adecuado para producción. La app guarda un HMAC del PIN y mantiene la clave HMAC en Android Keystore; un dispositivo rooteado/comprometido sigue fuera del modelo de protección.
 - **Compatibilidad fabricante:** Xiaomi/MIUI, Samsung y otros pueden requerir permitir autoinicio o excluir optimización de batería en ajustes del sistema.
 
 ## Lista de prueba manual

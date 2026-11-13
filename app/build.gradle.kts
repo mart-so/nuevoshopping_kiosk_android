@@ -1,6 +1,7 @@
 import java.io.File
 import java.nio.file.Files
-import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 plugins {
     id("com.android.application")
@@ -15,8 +16,8 @@ android {
         applicationId = "com.generic.kiosk"
         minSdk = 26
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 3
+        versionName = "1.0.2"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -53,7 +54,7 @@ fun publishDatedApk(variant: String, source: File) {
     check(source.isFile) { "Expected APK was not produced: $source" }
     dist.mkdirs()
 
-    val datedNamePattern = Regex("^generic-kiosk-browser-${Regex.escape(variant)}-\\d{4}-\\d{2}-\\d{2}\\.apk$")
+    val datedNamePattern = Regex("^generic-kiosk-browser-${Regex.escape(variant)}-\\d{4}-\\d{2}-\\d{2}(?:-\\d{4})?\\.apk$")
     dist.listFiles().orEmpty()
         .filter { it.isFile && datedNamePattern.matches(it.name) }
         .forEach { oldApk ->
@@ -63,10 +64,10 @@ fun publishDatedApk(variant: String, source: File) {
             check(oldApk.delete()) { "Could not remove previous dated APK: $oldApk" }
         }
 
-    val date = LocalDate.now().toString()
+    val buildStamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmm"))
     val stableName = if (variant == "debug") "generic-kiosk-browser-debug.apk" else "generic-kiosk-browser-release-unsigned.apk"
     source.copyTo(File(dist, stableName), overwrite = true)
-    source.copyTo(File(dist, "generic-kiosk-browser-$variant-$date.apk"), overwrite = true)
+    source.copyTo(File(dist, "generic-kiosk-browser-$variant-$buildStamp.apk"), overwrite = true)
 }
 
 tasks.configureEach {

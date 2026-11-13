@@ -6,11 +6,11 @@ Este archivo describe únicamente el APK `dist/generic-kiosk-browser-debug.apk`.
 
 - Ruta: `dist/generic-kiosk-browser-debug.apk`
 - Nombre de paquete: `com.generic.kiosk.debug`
-- Versión: `1.0.1-debug` (`versionCode` 2)
+- Versión: `1.0.2-debug` (`versionCode` 3)
 - Android mínimo: 8.0 / API 26
 - Android objetivo: API 35; compilado con SDK 35
 - Tamaño: 3,216,895 bytes
-- SHA-256: `cf65d71a7827f409139e9acabad77eef3b1c765ec4a0f6610408bee4d738a8b5`
+- SHA-256: `35b3d57bdf00705c0299132e8ac0156f4f61a86ccd714801a829d9edcf905f0e`
 - Firma: firmado automáticamente por Gradle con la clave de desarrollo local. Se puede instalar para pruebas sin firmarlo de nuevo. Para actualizar una instalación existente, el certificado debe coincidir.
 
 Para regenerarlo desde la raíz del repo:
@@ -34,14 +34,14 @@ adb shell monkey -p com.generic.kiosk.debug 1
 
 Al iniciar por primera vez abre `https://nuevoshopping.com/screens/link`. Para configurar otra página:
 
-1. Tocar el botón visible **Ajustes**.
+1. Tocar el icono `⋮` de la esquina superior derecha.
 2. Ingresar el PIN inicial `1234` (se indica en la pantalla si no se cambió).
 3. Cambiar el PIN y configurar la URL HTTP/HTTPS.
 4. Guardar y volver a la pantalla principal.
 
 El PIN inicial debe cambiarse antes de un uso real. Los PIN admitidos son de 4 a 12 dígitos. La verificación usa HMAC-SHA256 con una clave de Android Keystore; el PIN en texto claro no se guarda. Las preferencias se guardan localmente con Preferences DataStore.
 
-La aplicación se ejecutó previamente en un Redmi Note 8 con Android 11 y MIUI V125. Se corrigió un cierre al arrancar causado por acceder al `mainLooper` del contexto de la Activity durante su construcción. La versión 1.0.1 agrega la URL solicitada, acceso visible a Ajustes y elegibilidad como launcher Android. MIUI bloquea `adb install` sin SIM; la actualización fechada `generic-kiosk-browser-debug-2026-11-13.apk` está en Descargas del teléfono para instalarla manualmente.
+La aplicación se ejecutó previamente en un Redmi Note 8 con Android 11 y MIUI V125. Se corrigió un cierre al arrancar causado por acceder al `mainLooper` del contexto de la Activity durante su construcción. La versión 1.0.2 agrega la URL solicitada, el icono de administración `⋮` y elegibilidad como launcher Android. El APK más reciente es `generic-kiosk-browser-debug-2026-11-13-2044.apk`. MIUI bloqueó la instalación por ADB y el teléfono aún conserva la versión 1.0.1; hay que instalar esta actualización desde Descargas.
 
 ## Funciones incluidas
 
@@ -65,7 +65,7 @@ La aplicación se ejecutó previamente en un Redmi Note 8 con Android 11 y MIUI 
 
 ### Panel administrativo
 
-Se accede mediante el botón visible **Ajustes** y el PIN. El panel permite cambiar URL inicial, autoinicio, pantalla completa, modo dedicado, pantalla encendida, orientación, enlaces a otros hosts, intervalo de recarga, timeout y PIN. La entrada del PIN tiene una opción para mostrar u ocultar los dígitos.
+Se accede mediante el icono `⋮` de la esquina superior derecha y el PIN. El panel permite cambiar URL inicial, autoinicio, pantalla completa, modo dedicado, pantalla encendida, orientación, enlaces a otros hosts, intervalo de recarga, timeout y PIN. La entrada del PIN tiene una opción para mostrar u ocultar los dígitos.
 
 La actividad principal declara las categorías `HOME` y `DEFAULT`, además de `LAUNCHER`. Android y el launcher del fabricante pueden ofrecer **NuevoShopping Kiosk** como aplicación de inicio predeterminada.
 

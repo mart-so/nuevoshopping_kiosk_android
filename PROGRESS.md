@@ -8,7 +8,7 @@ Objetivo inmediato cumplido: versión mínima compilable que abre una URL config
 
 - Proyecto Kotlin/Android Studio, `applicationId com.generic.kiosk`, Android 8+ y SDK 35.
 - Carga de URL HTTP(S), cookies y DOM storage; filtros de esquemas no web.
-- Botón visible de Ajustes, PIN visible si se mantiene el valor inicial y opciones persistentes con DataStore; HMAC del PIN respaldado por Android Keystore.
+- Icono visible `⋮` para abrir administración, PIN visible si se mantiene el valor inicial y opciones persistentes con DataStore; HMAC del PIN respaldado por Android Keystore.
 - URL inicial `https://nuevoshopping.com/screens/link`; app elegible como launcher Android (`HOME`/`DEFAULT`).
 - Fullscreen inmersivo, orientación y mantener pantalla encendida.
 - Manejo básico de error de red/HTTP, reintento al recuperar conectividad.
@@ -37,6 +37,6 @@ Se encontró el AVD `Medium_Phone_API_36` (Android 36, x86_64), pero no arrancó
 - El logcat identificó el fallo durante la construcción de `MainActivity`: `Handler(mainLooper)` consultaba el `Context` de la Activity antes de que Android lo adjuntara.
 - Se cambió a `Handler(Looper.getMainLooper())`, que no depende del contexto de la Activity. También se protegieron la reconexión de red durante la inicialización y la destrucción de la vista.
 - Corregido `Handler(mainLooper)` a `Handler(Looper.getMainLooper())`; el acceso al contexto de la Activity ocurría antes de que Android lo adjuntara y causaba el cierre inmediato.
-- Implementadas las solicitudes siguientes: URL predeterminada `https://nuevoshopping.com/screens/link`, botón visible **Ajustes**, PIN inicial indicado en pantalla con control mostrar/ocultar y categorías `HOME`/`DEFAULT` para permitir elegir NuevoShopping Kiosk como launcher.
-- Se subió `versionCode` a 2 (`1.0.1`) para que Android la reconozca como actualización. `:app:assembleDebug` terminó correctamente; `aapt` confirmó los filtros `MAIN`/`HOME`/`DEFAULT` y `MAIN`/`LAUNCHER`, y `apksigner verify` confirmó la firma.
-- `scripts/build.ps1` genera APKs con fecha además de copias de nombre estable, y elimina copias fechadas anteriores dentro de `dist` antes de crear las nuevas. El APK de hoy es `dist/generic-kiosk-browser-debug-2026-11-13.apk` (SHA-256 `cf65d71a7827f409139e9acabad77eef3b1c765ec4a0f6610408bee4d738a8b5`). Está copiado en `/sdcard/Download/` del Redmi. MIUI bloquea instalación iniciada por ADB sin SIM, por lo que falta instalar manualmente y comprobar la pantalla y launcher en el teléfono.
+- Implementadas las solicitudes siguientes: URL predeterminada `https://nuevoshopping.com/screens/link`, icono `⋮` sin fondo para abrir administración, PIN inicial indicado en pantalla con control mostrar/ocultar y categorías `HOME`/`DEFAULT` para permitir elegir NuevoShopping Kiosk como launcher.
+- Se subió `versionCode` a 3 (`1.0.2`) para que Android la reconozca como actualización. `:app:assembleDebug` terminó correctamente; `aapt` confirmó los filtros `MAIN`/`HOME`/`DEFAULT` y `MAIN`/`LAUNCHER`, y `apksigner verify` confirmó la firma.
+- Gradle y `scripts/build.ps1` generan APKs con fecha, hora y minuto además de copias de nombre estable, y eliminan copias fechadas anteriores (incluido el formato anterior sin hora). El APK actual es `dist/generic-kiosk-browser-debug-2026-11-13-2044.apk` (SHA-256 `35b3d57bdf00705c0299132e8ac0156f4f61a86ccd714801a829d9edcf905f0e`). El teléfono conserva la versión 1.0.1 porque MIUI bloquea la actualización ADB; la 1.0.2 está copiada en Descargas para instalar manualmente.

@@ -8,7 +8,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
 import android.graphics.Color
-import android.graphics.drawable.GradientDrawable
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -41,26 +40,23 @@ class MainActivity : ComponentActivity() {
             handler.removeCallbacks(loadTimeout)
             if (loading && ::settings.isInitialized) handler.postDelayed(loadTimeout, settings.loadTimeoutSeconds * 1000L)
         }
-        val settingsButton = TextView(this).apply {
-            text = "Ajustes"
-            contentDescription = "Abrir configuración"
+        val adminMenu = TextView(this).apply {
+            text = "⋮"
+            contentDescription = "Menú de administración"
             setTextColor(Color.WHITE)
-            setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-            setPadding(dp(16), dp(10), dp(16), dp(10))
-            background = GradientDrawable().apply {
-                setColor(0xD9212121.toInt())
-                cornerRadius = dp(10).toFloat()
-            }
-            elevation = dp(6).toFloat()
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 30f)
+            gravity = Gravity.CENTER
+            setShadowLayer(dp(2).toFloat(), 0f, 0f, Color.BLACK)
             isClickable = true
             isFocusable = true
             setOnClickListener { openAdmin() }
         }
-        root.addView(settingsButton, FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.WRAP_CONTENT,
-            FrameLayout.LayoutParams.WRAP_CONTENT,
+        val adminMenuSize = dp(48)
+        root.addView(adminMenu, FrameLayout.LayoutParams(
+            adminMenuSize,
+            adminMenuSize,
             Gravity.TOP or Gravity.END
-        ).apply { setMargins(0, dp(16), dp(16), 0) })
+        ).apply { setMargins(0, dp(8), dp(8), 0) })
         setContentView(root)
         lifecycleScope.launch {
             settings = runCatching { repo.load() }.getOrDefault(KioskSettings())
